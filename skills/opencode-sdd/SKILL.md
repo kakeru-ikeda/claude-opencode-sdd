@@ -1,6 +1,6 @@
 ---
 name: opencode-sdd
-description: Subagent-Driven Development using OpenCode agents (executor/reviewer) instead of Claude Code native subagents. Same SDD workflow — implement→review→fix loop — but dispatches via `opencode run --agent`.
+description: Subagent-Driven Development using OpenCode agents (executor/reviewer/thinker/test-writer/operator) instead of Claude Code native subagents. Same SDD workflow — implement→review→fix loop — but dispatches via `opencode run --agent`.
 ---
 
 # OpenCode Subagent-Driven Development
@@ -13,10 +13,13 @@ Same workflow as `superpowers:subagent-driven-development`, but all subagents ar
 |------|---------------|
 | Implementer | `executor` |
 | Fix subagent | `executor` |
+| Test writing (TDD red) | `test-writer` |
 | Task reviewer | `reviewer` |
 | Final reviewer | `reviewer` |
+| Design critique / second opinion | `thinker` |
+| Git / shell operations | `operator` |
 
-Models are defined in each agent's frontmatter at `~/.config/opencode/agent/*.md` — change them there without touching skill files.
+Models are defined per agent in `~/.config/opencode/agent/<name>.md` — change them there without touching skill files.
 
 ## Setup
 
@@ -242,7 +245,7 @@ Point at evidence: file:line for every finding.
 **Reasoning:** [1-2 sentence technical assessment]
 ```
 
-### Step 6: Dispatch reviewer as reviewer
+### Step 6: Dispatch reviewer
 
 ```bash
 opencode run "Read .superpowers/sdd/task-N-review-dispatch.md and execute it completely. Your review instructions and all input files are attached." \
@@ -255,7 +258,7 @@ opencode run "Read .superpowers/sdd/task-N-review-dispatch.md and execute it com
   2>&1
 ```
 
-Read reviewer's output directly — it returns the full review as stdout.
+Reviewer returns the full review as stdout.
 
 ### Step 7: Handle review findings
 
@@ -311,7 +314,7 @@ If findings → dispatch ONE executor fix subagent with the complete list. Then 
 
 - **Never paste dispatch files into your context** — write them to `$SDDDIR/` and reference by path
 - **Always use absolute paths** in dispatch files (OpenCode may change CWD)
-- **executor for implementing/fixing, reviewer for reviewing (design stays with the orchestrator)**
+- **executor for implementing/fixing, reviewer for reviewing, thinker for design critique, test-writer for TDD red phase, operator for Git/shell ops**
 - **Check the ledger first** after any compaction — don't re-dispatch completed tasks
 - **One executor at a time** — no parallel implementer dispatches (git conflicts)
 - **Do not skip the re-review** after executor fixes Critical/Important issues

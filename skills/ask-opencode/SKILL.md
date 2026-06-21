@@ -49,12 +49,13 @@ If not in PATH, use the full path: `/home/server/.opencode/bin/opencode`
 ### Phase 3: Select agent and launch OpenCode in tmux
 
 Choose agent based on task type:
-- 実装・コード生成・修正 → `--agent executor` (default)
-- レビュー・分析        → `--agent reviewer`
+- 実装・コード生成・バグ修正 → `--agent executor`
+- テスト作成（TDD red phase） → `--agent test-writer`
+- レビュー・分析（read-only）  → `--agent reviewer`
+- 設計壁打ち・別視点・リスク分析 → `--agent thinker`
+- Git操作・シェルコマンド列   → `--agent operator`
 
-設計・計画は委譲せず ClaudeCode（オーケストレーター）が行う。
-
-No `--model` flag — model is configured per agent in `~/.config/opencode/agent/*.md`.
+No `--model` flag — model is configured per agent in `~/.config/opencode/agent/<name>.md`.
 
 Check if inside tmux:
 ```bash
