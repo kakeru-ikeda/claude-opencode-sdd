@@ -11,11 +11,11 @@ Use this when you need several rounds of implement→review→refine.
 ## Usage
 
 ```
-/oh-my-claudecode:opencode-worker start
-/oh-my-claudecode:opencode-worker send "implement feature X"
-/oh-my-claudecode:opencode-worker continue "now add error handling"
-/oh-my-claudecode:opencode-worker review
-/oh-my-claudecode:opencode-worker stop
+/opencode-worker start
+/opencode-worker send "implement feature X"
+/opencode-worker continue "now add error handling"
+/opencode-worker review
+/opencode-worker stop
 ```
 
 ## Subcommands

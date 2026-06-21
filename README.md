@@ -21,7 +21,6 @@ OpenCode (implementer / reviewer)
 | ツール | 確認コマンド |
 |--------|-------------|
 | [Claude Code](https://claude.ai/code) | `claude --version` |
-| [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) plugin | Claude Code 内で `/plugin list` |
 | [OpenCode](https://opencode.ai) | `opencode --version` |
 | [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) | `opencode plugin` で確認 |
 | OpenRouter API キー | `opencode providers` |
@@ -44,7 +43,9 @@ AGENTS.md に従ってセットアップして
 
 ## 何がインストールされるか
 
-### OMC スキル 3種（`~/.claude/plugins/cache/omc/.../skills/`）
+### ユーザースキル 3種（`~/.claude/skills/`）
+
+OMC プラグイン非依存。プラグイン更新で上書きされない。
 
 | スキル | 用途 |
 |--------|------|

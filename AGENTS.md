@@ -11,23 +11,16 @@
 
 ## Setup Instructions for the Agent
 
-### Step 1: Install OMC skills
+### Step 1: Install skills
 
-OMC プラグインのバージョンを動的に検出してスキルをコピーする。既存ファイルは上書きして構わない（これらはこのリポジトリが管理するスキルファイルのため）。
+スキルを `~/.claude/skills/` にコピーする（OMC 非依存・プラグイン更新に影響されない）。
+既存ファイルは上書きして構わない（これらはこのリポジトリが管理するスキルファイルのため）。
 
 ```bash
-OMC_BASE=~/.claude/plugins/cache/omc/oh-my-claudecode
-VER=$(ls "$OMC_BASE" 2>/dev/null | sort -V | tail -1)
-
-if [ -z "$VER" ]; then
-  echo "oh-my-claudecode plugin not found. Install via /plugin in Claude Code first."
-  exit 1
-fi
-
 for skill in skills/*/; do
   name=$(basename "$skill")
-  mkdir -p "$OMC_BASE/$VER/skills/$name"
-  cp "$skill/SKILL.md" "$OMC_BASE/$VER/skills/$name/SKILL.md"
+  mkdir -p "$HOME/.claude/skills/$name"
+  cp "$skill/SKILL.md" "$HOME/.claude/skills/$name/SKILL.md"
   echo "Installed: $name"
 done
 ```
@@ -74,7 +67,6 @@ fi
 
 セットアップ完了後、Claude Code 上で実行:
 ```
-/reload-plugins
 /reload-skills
 ```
 
@@ -94,6 +86,6 @@ opencode providers  # 認証状況確認
 
 | Skill | Invoke | Purpose |
 |-------|--------|---------|
-| `ask-opencode` | `/oh-my-claudecode:ask-opencode "task"` | 1回限りの実装委譲 |
-| `opencode-worker` | `/oh-my-claudecode:opencode-worker start` | 永続サーバーセッション |
-| `opencode-sdd` | `/oh-my-claudecode:opencode-sdd plan.md` | SDD フルワークフロー |
+| `ask-opencode` | `/ask-opencode "task"` | 1回限りの実装委譲 |
+| `opencode-worker` | `/opencode-worker start` | 永続サーバーセッション |
+| `opencode-sdd` | `/opencode-sdd plan.md` | SDD フルワークフロー |

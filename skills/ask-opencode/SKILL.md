@@ -11,7 +11,7 @@ Use this after design discussions when the spec is clear enough to implement.
 ## Usage
 
 ```
-/oh-my-claudecode:ask-opencode <task description>
+/ask-opencode <task description>
 ```
 
 Examples:
@@ -115,7 +115,7 @@ git diff > ".omc/artifacts/ask/opencode-${SLUG}-${TIMESTAMP}-diff.patch" 2>/dev/
 
 To continue with corrections after review:
 ```
-/oh-my-claudecode:ask-opencode continue: fix the issues from the review
+/ask-opencode continue: fix the issues from the review
 ```
 
 Use `opencode run --continue` to continue the last session:
