@@ -8,7 +8,7 @@ ClaudeCode をオーケストレーターとして、OpenCode エージェント
 ClaudeCode (orchestrator)
   ├─ 壁打ち・設計・レビュー
   ├─ /superpowers:writing-plans で設計書・実装計画を作成
-  └─ /oh-my-claudecode:opencode-sdd で OpenCode エージェントに実装を委譲
+  └─ /opencode-sdd で OpenCode エージェントに実装を委譲
 
 OpenCode (implementer / reviewer)
   ├─ Atlas - Plan Executor    → 実装・コード生成
@@ -69,11 +69,11 @@ OMC プラグイン非依存。プラグイン更新で上書きされない。
 
 ```
 1. /genshijin                         — 簡潔モードで会話コスト削減
-2. /oh-my-claudecode:deepinit         — コードベース把握（必要時）
+2. Read/Bash でプロジェクト構造を把握（必要時）
 3. 不明点は質問                       — 推測で進めない
 4. /superpowers:writing-plans         — 設計書 + 実装計画を docs/ に作成
 5. TaskCreate                         — 実装タスクを起票
-6. /oh-my-claudecode:opencode-sdd     — TDD で Atlas/Hephaestus が実装・レビュー
+6. /opencode-sdd                       — TDD で Atlas/Hephaestus が実装・レビュー
 ```
 
 ## ライセンス
