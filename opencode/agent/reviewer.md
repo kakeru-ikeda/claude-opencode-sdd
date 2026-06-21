@@ -1,7 +1,7 @@
 ---
 description: Read-only code reviewer invoked by an orchestrator (e.g. Claude Code). Reports findings, makes no edits.
 mode: primary
-model: openrouter/moonshotai/kimi-k2.7-code
+model: openrouter/z-ai/glm-5.2
 permission:
   task: deny
   edit: deny
