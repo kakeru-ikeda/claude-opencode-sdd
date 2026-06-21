@@ -1,6 +1,6 @@
 ---
 name: opencode-sdd
-description: Subagent-Driven Development using OpenCode agents (Atlas/Hephaestus/Prometheus) instead of Claude Code native subagents. Same SDD workflow — implement→review→fix loop — but dispatches via `opencode run --agent`.
+description: Subagent-Driven Development using OpenCode agents (executor/reviewer) instead of Claude Code native subagents. Same SDD workflow — implement→review→fix loop — but dispatches via `opencode run --agent`.
 ---
 
 # OpenCode Subagent-Driven Development
@@ -11,13 +11,12 @@ Same workflow as `superpowers:subagent-driven-development`, but all subagents ar
 
 | Role | OpenCode Agent |
 |------|---------------|
-| Implementer | `Atlas - Plan Executor` |
-| Fix subagent | `Atlas - Plan Executor` |
-| Task reviewer | `Hephaestus - Deep Agent` |
-| Final reviewer | `Hephaestus - Deep Agent` |
-| Plan/design tasks | `Prometheus - Plan Builder` |
+| Implementer | `executor` |
+| Fix subagent | `executor` |
+| Task reviewer | `reviewer` |
+| Final reviewer | `reviewer` |
 
-Models are defined in `~/.config/opencode/oh-my-openagent.json` — change them there without touching skill files.
+Models are defined in each agent's frontmatter at `~/.config/opencode/agent/*.md` — change them there without touching skill files.
 
 ## Setup
 
@@ -144,18 +143,18 @@ Then output ONLY (under 15 lines — detail is in the report file):
 
 Use **absolute paths** for all file references inside the dispatch file — OpenCode changes directories.
 
-### Step 3: Dispatch Atlas as implementer
+### Step 3: Dispatch executor as implementer
 
 ```bash
 opencode run "Read .superpowers/sdd/task-N-dispatch.md and execute it completely. Your task brief and full instructions are in that file." \
-  --agent "Atlas - Plan Executor" \
+  --agent executor \
   --file "$SDDDIR/task-N-dispatch.md" \
   --file "$SDDDIR/task-N-brief.md" \
   --dangerously-skip-permissions \
   2>&1 | tee "$SDDDIR/task-N-stdout.txt"
 ```
 
-Read Atlas's stdout output to determine status. Then read the full report:
+Read executor's stdout output to determine status. Then read the full report:
 ```bash
 cat "$SDDDIR/task-N-report.md"
 ```
@@ -163,7 +162,7 @@ cat "$SDDDIR/task-N-report.md"
 **Handle status:**
 - `DONE` → proceed to review
 - `DONE_WITH_CONCERNS` → read concerns, assess, then proceed to review
-- `NEEDS_CONTEXT` → provide context, re-dispatch Atlas
+- `NEEDS_CONTEXT` → provide context, re-dispatch executor
 - `BLOCKED` → assess: more context / more capable model / smaller task / escalate to user
 
 ### Step 4: Generate review package
@@ -243,11 +242,11 @@ Point at evidence: file:line for every finding.
 **Reasoning:** [1-2 sentence technical assessment]
 ```
 
-### Step 6: Dispatch Hephaestus as reviewer
+### Step 6: Dispatch reviewer as reviewer
 
 ```bash
 opencode run "Read .superpowers/sdd/task-N-review-dispatch.md and execute it completely. Your review instructions and all input files are attached." \
-  --agent "Hephaestus - Deep Agent" \
+  --agent reviewer \
   --file "$SDDDIR/task-N-review-dispatch.md" \
   --file "$SDDDIR/task-N-brief.md" \
   --file "$SDDDIR/task-N-report.md" \
@@ -256,7 +255,7 @@ opencode run "Read .superpowers/sdd/task-N-review-dispatch.md and execute it com
   2>&1
 ```
 
-Read Hephaestus's output directly — it returns the full review as stdout.
+Read reviewer's output directly — it returns the full review as stdout.
 
 ### Step 7: Handle review findings
 
@@ -272,16 +271,16 @@ Read Hephaestus's output directly — it returns the full review as stdout.
 - Write `$SDDDIR/task-N-fix-dispatch.md` with:
   - All Critical/Important findings with file:line
   - Instruction to re-run covering tests and append results to `task-N-report.md`
-- Dispatch Atlas as fixer:
+- Dispatch executor as fixer:
   ```bash
   opencode run "Read .superpowers/sdd/task-N-fix-dispatch.md and fix all issues." \
-    --agent "Atlas - Plan Executor" \
+    --agent executor \
     --file "$SDDDIR/task-N-fix-dispatch.md" \
     --file "$SDDDIR/task-N-report.md" \
     --dangerously-skip-permissions \
     2>&1 | tee "$SDDDIR/task-N-fix-stdout.txt"
   ```
-- Generate new review package, re-dispatch Hephaestus
+- Generate new review package, re-dispatch reviewer
 
 **Minor findings:** Record in ledger, pass to final reviewer.
 
@@ -295,16 +294,16 @@ FINAL_PKG=$("$SDD_SCRIPTS/review-package" "$MERGE_BASE" HEAD 2>&1)
 FINAL_FILE=$(echo "$FINAL_PKG" | grep "^wrote " | sed 's/^wrote //; s/: .*//')
 ```
 
-Dispatch Hephaestus for the broad whole-branch review:
+Dispatch reviewer for the broad whole-branch review:
 ```bash
 opencode run "You are doing a broad whole-branch code review before merge. Review the full branch diff for correctness, consistency, quality, and anything the per-task reviewers could not see across tasks. The diff package is attached. Return your findings directly as output." \
-  --agent "Hephaestus - Deep Agent" \
+  --agent reviewer \
   --file "$FINAL_FILE" \
   --dangerously-skip-permissions \
   2>&1
 ```
 
-If findings → dispatch ONE Atlas fix subagent with the complete list. Then proceed to `superpowers:finishing-a-development-branch`.
+If findings → dispatch ONE executor fix subagent with the complete list. Then proceed to `superpowers:finishing-a-development-branch`.
 
 ---
 
@@ -312,10 +311,10 @@ If findings → dispatch ONE Atlas fix subagent with the complete list. Then pro
 
 - **Never paste dispatch files into your context** — write them to `$SDDDIR/` and reference by path
 - **Always use absolute paths** in dispatch files (OpenCode may change CWD)
-- **Atlas for implementing/fixing, Hephaestus for reviewing, Prometheus for design tasks**
+- **executor for implementing/fixing, reviewer for reviewing (design stays with the orchestrator)**
 - **Check the ledger first** after any compaction — don't re-dispatch completed tasks
-- **One Atlas at a time** — no parallel implementer dispatches (git conflicts)
-- **Do not skip the re-review** after Atlas fixes Critical/Important issues
+- **One executor at a time** — no parallel implementer dispatches (git conflicts)
+- **Do not skip the re-review** after executor fixes Critical/Important issues
 
 ## Ledger Format
 

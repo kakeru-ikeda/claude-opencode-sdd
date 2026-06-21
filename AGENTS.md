@@ -6,8 +6,9 @@
 ## What This Repo Provides
 
 - `claude/CLAUDE.md` — 開発デフォルト指針（OpenCode 統合・エージェント選択ルール）
-- `opencode/oh-my-openagent.json` — OpenCode エージェント定義のサンプル（モデルはユーザーが上書き）
-- `skills/` — OMC カスタムスキル 3種
+- `opencode/agent/executor.md`・`opencode/agent/reviewer.md` — OpenCode 実装/レビュー専用エージェント定義
+- `opencode/opencode.json` — OpenCode 設定（プラグイン依存なし）
+- `skills/` — カスタムスキル 3種
 
 ## Setup Instructions for the Agent
 
@@ -42,25 +43,23 @@ else
 fi
 ```
 
-### Step 3: OpenCode agent config (optional / user decides)
+### Step 3: Install OpenCode agent definitions
 
-`opencode/oh-my-openagent.json` はあくまで**参考サンプル**。
-ユーザーに確認してから対応を選ぶ：
-
-- **既存の `~/.config/opencode/oh-my-openagent.json` がない** → コピーして構わない
-- **既存ファイルがある** → 差分を表示してユーザーに判断を委ねる。エージェントは勝手にマージまたは上書きしない
+`opencode/agent/*.md`（`executor` / `reviewer`）を `~/.config/opencode/agent/` にコピーする。
+OmO プラグインは不要。既存の同名ファイルがある場合は上書きせず差分を表示する。
 
 ```bash
-if [ ! -f ~/.config/opencode/oh-my-openagent.json ]; then
-  mkdir -p ~/.config/opencode
-  cp opencode/oh-my-openagent.json ~/.config/opencode/oh-my-openagent.json
-  echo "Installed oh-my-openagent.json"
-else
-  echo "~/.config/opencode/oh-my-openagent.json already exists."
-  echo "--- diff (repo vs installed) ---"
-  diff opencode/oh-my-openagent.json ~/.config/opencode/oh-my-openagent.json || true
-  echo "--- Merge manually if desired ---"
-fi
+mkdir -p ~/.config/opencode/agent
+for f in opencode/agent/*.md; do
+  name=$(basename "$f")
+  if [ -f "$HOME/.config/opencode/agent/$name" ]; then
+    echo "~/.config/opencode/agent/$name already exists — showing diff:"
+    diff "$f" "$HOME/.config/opencode/agent/$name" || true
+  else
+    cp "$f" "$HOME/.config/opencode/agent/$name"
+    echo "Installed agent: $name"
+  fi
+done
 ```
 
 ### Step 4: Reload
@@ -72,14 +71,13 @@ fi
 
 ## Agent Keys (for OpenCode)
 
-このリポジトリのモデル設定 (`opencode/oh-my-openagent.json`) は openrouter を使用。
-利用には OpenRouter の API キーが必要:
+`opencode/agent/*.md` のモデルは openrouter を使用。利用には OpenRouter の API キーが必要:
 
 ```bash
 opencode providers  # 認証状況確認
 ```
 
-モデルの変更は `~/.config/opencode/oh-my-openagent.json` をユーザーが直接編集。
+モデルの変更は `~/.config/opencode/agent/executor.md` / `reviewer.md` の frontmatter `model:` を直接編集する。
 スキルファイルにモデル名は記載しない設計のため、スキルは変更不要。
 
 ## Installed Skills

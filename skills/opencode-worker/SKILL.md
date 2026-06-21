@@ -52,6 +52,7 @@ Report the server URL and confirm the worker is ready.
 OPENCODE_URL=$(python3 -c "import sys,json; print(json.load(open('.omc/state/opencode-worker.json'))['url'])" 2>/dev/null || echo "http://127.0.0.1:4096")
 
 opencode run "TASK_HERE" \
+  --agent executor \
   --attach "$OPENCODE_URL" \
   --dangerously-skip-permissions \
   --format default \
@@ -80,6 +81,7 @@ OPENCODE_URL=$(python3 -c "import json; print(json.load(open('.omc/state/opencod
 
 if [ -n "$SESSION_ID" ]; then
   opencode run "FOLLOWUP_HERE" \
+    --agent executor \
     --attach "$OPENCODE_URL" \
     --session "$SESSION_ID" \
     --continue \
@@ -88,6 +90,7 @@ if [ -n "$SESSION_ID" ]; then
 else
   # Fall back to --continue without session ID (uses last session)
   opencode run "FOLLOWUP_HERE" \
+    --agent executor \
     --attach "$OPENCODE_URL" \
     --continue \
     --dangerously-skip-permissions \

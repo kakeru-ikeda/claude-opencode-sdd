@@ -11,9 +11,8 @@ ClaudeCode (orchestrator)
   └─ /opencode-sdd で OpenCode エージェントに実装を委譲
 
 OpenCode (implementer / reviewer)
-  ├─ Atlas - Plan Executor    → 実装・コード生成
-  ├─ Hephaestus - Deep Agent  → レビュー・分析
-  └─ Prometheus - Plan Builder → 設計・計画立案
+  ├─ executor  → 実装・コード生成・修正（自我なし・委譲したことだけ実行）
+  └─ reviewer  → レビュー・分析（read-only、指摘のみ）
 ```
 
 ## 前提条件
@@ -22,7 +21,6 @@ OpenCode (implementer / reviewer)
 |--------|-------------|
 | [Claude Code](https://claude.ai/code) | `claude --version` |
 | [OpenCode](https://opencode.ai) | `opencode --version` |
-| [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) | `opencode plugin` で確認 |
 | OpenRouter API キー | `opencode providers` |
 
 ## セットアップ
@@ -59,11 +57,10 @@ OMC プラグイン非依存。プラグイン更新で上書きされない。
 - 開発フロー (genshijin → deepinit → writing-plans → opencode-sdd)
 - OpenCode エージェントのキーワードトリガーと選択ルール
 
-### `opencode/oh-my-openagent.json`（サンプル・参考用）
+### `opencode/agent/*.md`（エージェント定義）
 
-モデル設定はユーザーが自分で決めるもの。
-このリポジトリのサンプルは openrouter を使用（Hephaestus=GPT-5.4、Atlas/Prometheus=Kimi K2.7 Code）。
-既存ファイルがある場合、エージェントは差分を表示するだけで自動マージしない。
+`executor`（実装）と `reviewer`（レビュー）の定義。モデルは frontmatter に記載（既定: openrouter/moonshotai/kimi-k2.7-code）。
+セットアップ時に `~/.config/opencode/agent/` にコピーされる。OmO プラグインへの依存はない。
 
 ## 開発ワークフロー
 
@@ -73,7 +70,7 @@ OMC プラグイン非依存。プラグイン更新で上書きされない。
 3. 不明点は質問                       — 推測で進めない
 4. /superpowers:writing-plans         — 設計書 + 実装計画を docs/ に作成
 5. TaskCreate                         — 実装タスクを起票
-6. /opencode-sdd                       — TDD で Atlas/Hephaestus が実装・レビュー
+6. /opencode-sdd                       — TDD で executor/reviewer が実装・レビュー
 ```
 
 ## ライセンス

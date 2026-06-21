@@ -49,12 +49,12 @@ If not in PATH, use the full path: `/home/server/.opencode/bin/opencode`
 ### Phase 3: Select agent and launch OpenCode in tmux
 
 Choose agent based on task type:
-- 実装・コード生成 → `--agent "Atlas - Plan Executor"`
-- 設計・計画立案  → `--agent "Prometheus - Plan Builder"`
-- レビュー・分析  → `--agent "Hephaestus - Deep Agent"`
-- 複合・長時間    → `--agent "Sisyphus - Ultraworker"` (default)
+- 実装・コード生成・修正 → `--agent executor` (default)
+- レビュー・分析        → `--agent reviewer`
 
-No `--model` flag — model is configured per agent in `oh-my-openagent.json`.
+設計・計画は委譲せず ClaudeCode（オーケストレーター）が行う。
+
+No `--model` flag — model is configured per agent in `~/.config/opencode/agent/*.md`.
 
 Check if inside tmux:
 ```bash
@@ -63,13 +63,13 @@ echo "${TMUX:-not-in-tmux}"
 
 **If inside tmux** — create a new window for visibility:
 ```bash
-tmux new-window -n "opencode" "opencode run \"$(head -1 .omc/opencode-spec.md)\" --agent \"Atlas - Plan Executor\" --file .omc/opencode-spec.md --dangerously-skip-permissions; echo '=== OPENCODE DONE ==='; read"
+tmux new-window -n "opencode" "opencode run \"$(head -1 .omc/opencode-spec.md)\" --agent executor --file .omc/opencode-spec.md --dangerously-skip-permissions; echo '=== OPENCODE DONE ==='; read"
 ```
 
 **If NOT inside tmux** — run directly and capture output to file:
 ```bash
 opencode run "$(head -1 .omc/opencode-spec.md)" \
-  --agent "Atlas - Plan Executor" \
+  --agent executor \
   --file .omc/opencode-spec.md \
   --dangerously-skip-permissions \
   2>&1 | tee .omc/opencode-output.txt
