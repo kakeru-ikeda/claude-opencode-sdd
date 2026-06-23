@@ -6,7 +6,7 @@
 ## What This Repo Provides
 
 - `claude/CLAUDE.md` — 開発デフォルト指針（OpenCode 統合・エージェント選択ルール）
-- `opencode/agent/executor.md`・`opencode/agent/reviewer.md` — OpenCode 実装/レビュー専用エージェント定義
+- `opencode/agent/executor.md`・`opencode/agent/reviewer.md`・`opencode/agent/thinker.md`・`opencode/agent/test-writer.md`・`opencode/agent/operator.md`・`opencode/agent/explorer.md` — OpenCode エージェント定義
 - `opencode/opencode.json` — OpenCode 設定（プラグイン依存なし）
 - `skills/` — カスタムスキル 3種
 
@@ -45,7 +45,7 @@ fi
 
 ### Step 3: Install OpenCode agent definitions
 
-`opencode/agent/*.md`（`executor` / `reviewer`）を `~/.config/opencode/agent/` にコピーする。
+`opencode/agent/*.md`（`executor` / `reviewer` / `thinker` / `test-writer` / `operator` / `explorer`）を `~/.config/opencode/agent/` にコピーする。
 OmO プラグインは不要。既存の同名ファイルがある場合は上書きせず差分を表示する。
 
 ```bash
@@ -77,7 +77,7 @@ done
 opencode providers  # 認証状況確認
 ```
 
-モデルの変更は `~/.config/opencode/agent/executor.md` / `reviewer.md` の frontmatter `model:` を直接編集する。
+モデルの変更は `~/.config/opencode/agent/executor.md`・`reviewer.md`・`thinker.md`・`test-writer.md`・`operator.md`・`explorer.md` の frontmatter `model:` を直接編集する。
 スキルファイルにモデル名は記載しない設計のため、スキルは変更不要。
 
 ## Installed Skills
